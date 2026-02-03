@@ -38,7 +38,7 @@ from src.centerline.skeleton import extract_centerline_skeleton
 from src.centerline.distance_field import refine_centerline_with_distance
 from src.centerline.graph import build_vessel_graph
 from src.visualization.projections import create_summary_figure
-from src.visualization.report import save_centerline_data, generate_report
+from src.visualization.report import save_centerline_data, generate_report, generate_html_report
 
 
 # ---------------------------------------------------------------------------
@@ -224,6 +224,8 @@ def main(argv: list[str] | None = None) -> None:
     seg_method = seg_cfg.get("method", "otsu")
     threshold_factor = seg_cfg.get("threshold_factor", 1.0)
     min_object_size = seg_cfg.get("min_object_size", 100)
+    morph_cfg = seg_cfg.get("morphology", {})
+    opening_radius = morph_cfg.get("opening_radius", 1)
 
     print(f"[step 5] Segmenting vessels (method={seg_method}) ...")
     vessel_mask, seg_params = segment_vessels(
@@ -231,6 +233,7 @@ def main(argv: list[str] | None = None) -> None:
         method=seg_method,
         threshold_factor=threshold_factor,
         min_object_size=min_object_size,
+        opening_radius=opening_radius,
     )
     print(f"         Segmented voxels: {seg_params['voxel_count']} "
           f"({100.0 * seg_params['voxel_count'] / seg_params['total_voxels']:.2f}%)")
@@ -344,6 +347,23 @@ def main(argv: list[str] | None = None) -> None:
             graph_data=graph_data,
             save_dir=output_dir,
         )
+
+    # ------------------------------------------------------------------
+    # Step 12: HTML report
+    # ------------------------------------------------------------------
+    html_path = generate_html_report(
+        volume_shape=volume.shape,
+        config=config,
+        seg_params=seg_params,
+        skel_stats=skel_stats,
+        graph_data=graph_data,
+        metrics=metrics,
+        mean_radius=float(radii.mean()) if radii is not None else None,
+        input_source=input_path or "synthetic phantom",
+        config_path=str(config_path),
+        save_dir=output_dir,
+    )
+    print(f"[step 12] HTML report -> {html_path}")
 
     # ------------------------------------------------------------------
     # Summary

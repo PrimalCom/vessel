@@ -1,0 +1,86 @@
+[
+  {
+    "name": "simple_single_vessel",
+    "description": "Single straight-ish vessel, low noise, small volume",
+    "volume": "data/numpy/simple_single_vessel.npy",
+    "ground_truth_mask": "data/ground_truth/simple_single_vessel_mask.npy",
+    "ground_truth_centerlines": "data/ground_truth/simple_single_vessel_centerlines.json",
+    "shape": [
+      64,
+      64,
+      64
+    ],
+    "num_vessels": 1,
+    "vessel_volume_fraction": 0.0019
+  },
+  {
+    "name": "dense_branching",
+    "description": "Dense vessel tree with many branches",
+    "volume": "data/numpy/dense_branching.npy",
+    "ground_truth_mask": "data/ground_truth/dense_branching_mask.npy",
+    "ground_truth_centerlines": "data/ground_truth/dense_branching_centerlines.json",
+    "shape": [
+      96,
+      96,
+      96
+    ],
+    "num_vessels": 12,
+    "vessel_volume_fraction": 0.0034
+  },
+  {
+    "name": "thin_vessels_noisy",
+    "description": "Thin vessels with high noise - challenging case",
+    "volume": "data/numpy/thin_vessels_noisy.npy",
+    "ground_truth_mask": "data/ground_truth/thin_vessels_noisy_mask.npy",
+    "ground_truth_centerlines": "data/ground_truth/thin_vessels_noisy_centerlines.json",
+    "shape": [
+      64,
+      64,
+      64
+    ],
+    "num_vessels": 6,
+    "vessel_volume_fraction": 0.0017
+  },
+  {
+    "name": "thick_vessels_clean",
+    "description": "Thick vessels with minimal noise - easy case",
+    "volume": "data/numpy/thick_vessels_clean.npy",
+    "ground_truth_mask": "data/ground_truth/thick_vessels_clean_mask.npy",
+    "ground_truth_centerlines": "data/ground_truth/thick_vessels_clean_centerlines.json",
+    "shape": [
+      80,
+      80,
+      80
+    ],
+    "num_vessels": 4,
+    "vessel_volume_fraction": 0.0088
+  },
+  {
+    "name": "production_size",
+    "description": "Production-size phantom matching default config",
+    "volume": "data/numpy/production_size.npy",
+    "ground_truth_mask": "data/ground_truth/production_size_mask.npy",
+    "ground_truth_centerlines": "data/ground_truth/production_size_centerlines.json",
+    "shape": [
+      128,
+      128,
+      128
+    ],
+    "num_vessels": 8,
+    "vessel_volume_fraction": 0.0032
+  },
+  {
+    "name": "anisotropic_volume",
+    "description": "Non-cubic volume simulating anisotropic voxel spacing",
+    "volume": "data/numpy/anisotropic_volume.npy",
+    "ground_truth_mask": "data/ground_truth/anisotropic_volume_mask.npy",
+    "ground_truth_centerlines": "data/ground_truth/anisotropic_volume_centerlines.json",
+    "shape": [
+      128,
+      64,
+      64
+    ],
+    "num_vessels": 5,
+    "vessel_volume_fraction": 0.0037
+  }
+]

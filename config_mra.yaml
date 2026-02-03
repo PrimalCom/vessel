@@ -1,0 +1,40 @@
+# MRA-optimized configuration for real brain MRA data (e.g. chris_MRA.nii.gz)
+# Tuned for 0.5mm-voxel bright-vessel MR angiography volumes.
+
+data:
+  source: "data/nifti/chris_MRA.nii.gz"
+
+preprocessing:
+  normalize: "minmax"
+  denoise:
+    enabled: true
+    method: "gaussian"
+    sigma: 1.0
+
+vesselness:
+  method: "frangi"
+  sigmas_start: 1.0
+  sigmas_stop: 8.0
+  sigmas_step: 1.0
+  black_ridges: false
+
+segmentation:
+  method: "percentile"
+  threshold_factor: 1.5       # keeps top ~3.3% of voxels
+  min_object_size: 200
+  morphology:
+    opening_radius: 1
+
+centerline:
+  method: "skeleton"
+  refine_with_distance: true
+
+evaluation:
+  tolerance_voxels: 2.0
+
+output:
+  save_dir: "outputs"
+  save_figures: true
+  save_metrics: true
+  save_centerline_coords: true
+  figure_dpi: 150

@@ -44,6 +44,19 @@ Supported formats: NIfTI (`.nii`, `.nii.gz`), DICOM (directory of `.dcm` files),
 python scripts/run_pipeline.py --config config.yaml
 ```
 
+Two config profiles are included:
+
+- **`config.yaml`** -- Default profile tuned for synthetic phantoms and general use. Uses percentile thresholding, Gaussian denoising, and no morphological opening (preserves thin vessels).
+- **`config_mra.yaml`** -- Optimized for real brain MRA data (e.g. `chris_MRA.nii.gz`). Uses wider sigma range, stronger denoising, and morphological opening to clean up noise.
+
+```bash
+# Synthetic data (default config)
+python scripts/run_pipeline.py
+
+# Real MRA data
+python scripts/run_pipeline.py --config config_mra.yaml
+```
+
 Edit `config.yaml` to control every pipeline stage. Key options:
 
 | Section | Option | Default | Description |
@@ -114,6 +127,66 @@ scripts/
   run_demo.py       Quick synthetic demo
   evaluate.py       Standalone evaluation
 tests/              28 unit + integration tests
+```
+
+## Test Datasets
+
+Test data lives in `data/` and includes both real medical images and generated synthetic phantoms.
+
+### Real Medical Images (NIfTI)
+
+Downloaded from [neurolabusc/niivue-images](https://github.com/neurolabusc/niivue-images) -- a collection of low-resolution sample NIfTI images covering multiple modalities.
+
+| File | Modality | Shape | Voxel Size (mm) | Description |
+|------|----------|-------|------------------|-------------|
+| `chris_MRA.nii.gz` | MR Angiography | 200x256x120 | 0.52 x 0.52 x 0.65 | Brain vessel imaging -- most relevant for this pipeline |
+| `CT_AVM.nii.gz` | CT | 256x242x154 | 0.72 x 0.72 x 1.0 | Arteriovenous malformation (vascular pathology) |
+| `CT_Abdo.nii.gz` | Abdominal CT | 255x178x256 | 1.49 x 1.49 x 1.49 | Abdominal CT with visible vessels |
+| `pcasl.nii.gz` | Arterial Spin Label | 52x68x20x10 | 3.0 x 3.0 x 6.0 | Cerebral perfusion imaging (4D) |
+| `zstat1.nii.gz` | fMRI stat map | 64x64x21 | 4.0 x 4.0 x 6.0 | Brain activation statistics (from [NIMH NIfTI test data](https://nifti.nimh.nih.gov/nifti-1/data/)) |
+
+To run the pipeline on real MRA data:
+
+```bash
+python scripts/run_pipeline.py --input data/nifti/chris_MRA.nii.gz
+```
+
+Or update `config.yaml`:
+
+```yaml
+data:
+  source: "data/nifti/chris_MRA.nii.gz"
+```
+
+### Synthetic Phantoms (NumPy)
+
+Generated with `scripts/generate_test_data.py` using the project's own phantom generator. Each dataset has a matching ground-truth mask and centerline file in `data/ground_truth/`.
+
+| File | Shape | Vessels | Noise | Description |
+|------|-------|---------|-------|-------------|
+| `simple_single_vessel.npy` | 64x64x64 | 1 | 0.02 | Single vessel, low noise -- baseline |
+| `dense_branching.npy` | 96x96x96 | 12 | 0.05 | Dense vessel tree with many branches |
+| `thin_vessels_noisy.npy` | 64x64x64 | 6 | 0.12 | Thin vessels with high noise -- challenging |
+| `thick_vessels_clean.npy` | 80x80x80 | 4 | 0.01 | Thick vessels, minimal noise -- easy |
+| `production_size.npy` | 128x128x128 | 8 | 0.05 | Matches default config parameters |
+| `anisotropic_volume.npy` | 128x64x64 | 5 | 0.04 | Non-cubic volume, anisotropic spacing |
+
+To regenerate the synthetic datasets:
+
+```bash
+python scripts/generate_test_data.py
+```
+
+The manifest at `data/manifest.json` lists all synthetic datasets with their metadata.
+
+### Data Directory Layout
+
+```
+data/
+  nifti/              Real medical images (.nii.gz)
+  numpy/              Synthetic phantom volumes (.npy)
+  ground_truth/       Masks and centerlines for synthetic phantoms
+  manifest.json       Metadata for all synthetic datasets
 ```
 
 ## Tests

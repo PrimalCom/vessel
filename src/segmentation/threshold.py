@@ -18,6 +18,7 @@ def segment_vessels(
     method: str = "otsu",
     threshold_factor: float = 1.0,
     min_object_size: int = 100,
+    opening_radius: int = 1,
 ) -> tuple[np.ndarray, dict[str, Any]]:
     """Segment vessels from a vesselness-enhanced volume.
 
@@ -40,6 +41,9 @@ def segment_vessels(
         for the percentile cutoff (``"percentile"``).
     min_object_size : int
         Connected components with fewer voxels than this are removed.
+    opening_radius : int
+        Radius of the ball structuring element for morphological opening.
+        Set to 0 to skip opening entirely (useful for preserving thin vessels).
 
     Returns
     -------
@@ -80,7 +84,8 @@ def segment_vessels(
 
     # --- Post-processing --------------------------------------------------
     # Morphological opening to remove speckle noise
-    mask = opening(mask, footprint=ball(1))
+    if opening_radius > 0:
+        mask = opening(mask, footprint=ball(opening_radius))
 
     # Remove small connected components
     mask = remove_small_objects(mask, max_size=min_object_size - 1)

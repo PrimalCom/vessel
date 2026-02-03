@@ -15,23 +15,23 @@ preprocessing:
     level: 300
     width: 700
   denoise:
-    enabled: false
+    enabled: true
     method: "gaussian"        # "gaussian" | "median"
     sigma: 0.5
 
 vesselness:
   method: "frangi"            # "frangi" | "sato" | "meijering"
-  sigmas_start: 1.0
-  sigmas_stop: 5.0
+  sigmas_start: 0.5
+  sigmas_stop: 6.0
   sigmas_step: 0.5
   black_ridges: false
 
 segmentation:
-  method: "otsu"              # "otsu" | "hysteresis" | "percentile"
-  threshold_factor: 1.0
-  min_object_size: 100
+  method: "percentile"        # "otsu" | "hysteresis" | "percentile"
+  threshold_factor: 0.5       # keeps top ~10% of voxels
+  min_object_size: 50
   morphology:
-    opening_radius: 1         # ball radius for binary opening
+    opening_radius: 0         # 0 = skip opening (preserves thin vessels)
 
 centerline:
   method: "skeleton"          # "skeleton" | "distance"
