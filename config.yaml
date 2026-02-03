@@ -1,0 +1,48 @@
+# Vessel-Guided Centerline Extraction Configuration
+
+data:
+  source: "phantom"           # "phantom" | path to NIfTI/DICOM
+  phantom:
+    shape: [128, 128, 128]
+    num_main_vessels: 3
+    num_branches: 5
+    noise_level: 0.05
+    seed: 42
+
+preprocessing:
+  normalize: "minmax"         # "minmax" | "zscore" | "window"
+  ct_window:                  # only used if normalize == "window"
+    level: 300
+    width: 700
+  denoise:
+    enabled: false
+    method: "gaussian"        # "gaussian" | "median"
+    sigma: 0.5
+
+vesselness:
+  method: "frangi"            # "frangi" | "sato" | "meijering"
+  sigmas_start: 1.0
+  sigmas_stop: 5.0
+  sigmas_step: 0.5
+  black_ridges: false
+
+segmentation:
+  method: "otsu"              # "otsu" | "hysteresis" | "percentile"
+  threshold_factor: 1.0
+  min_object_size: 100
+  morphology:
+    opening_radius: 1         # ball radius for binary opening
+
+centerline:
+  method: "skeleton"          # "skeleton" | "distance"
+  refine_with_distance: true
+
+evaluation:
+  tolerance_voxels: 2.0
+
+output:
+  save_dir: "outputs"
+  save_figures: true
+  save_metrics: true
+  save_centerline_coords: true
+  figure_dpi: 150
